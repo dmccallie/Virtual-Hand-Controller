@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hold Down Button with Speed Control Buttons</title>
+    <style>
+       body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .controller {
+            display: grid;
+            grid-template-columns: 100px 100px 100px;
+            gap: 10px;
+            justify-items: center;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            width: 100px;
+            height: 100px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 10px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        .up {
+            grid-column: 2;
+        }
+
+        .left {
+            grid-column: 1;
+        }
+
+        .right {
+            grid-column: 3;
+        }
+
+        .down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .speed-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .speed-button {
+            width: 60px;
+            height: 40px;
+            color: white;
+            background-color: #FF0000;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .speed-button:hover {
+            background-color: #460000;
+        }
+    </style>
+    <script>
+        let holdInterval;
+        let intervalDelay = 100; // Default delay in milliseconds
+
+        function sendMessage(direction) {
+            const msg = { message: direction, speed: intervalDelay }; // Send direction and speed
+
+            // Send message to the server
+            fetch('/message', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(msg)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);  // Log the response from the server
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Update interval delay when speed button is clicked
+        function setSpeed(delay) {
+            intervalDelay = delay;
+            document.getElementById("speedDisplay").innerText = `Current Speed: ${intervalDelay} ms`;
+        }
+
+        function setupButtonEvents() {
+            const directions = ["up", "left", "right", "down"];
+            directions.forEach(direction => {
+                const button = document.getElementById(`${direction}-button`);
+
+                button.addEventListener("mousedown", () => {
+                    button.style.backgroundColor = "darkgreen";
+                    holdInterval = setInterval(() => {
+                        sendMessage(direction);
+                    }, intervalDelay);
+                });
+
+                button.addEventListener("mouseup", () => {
+                    button.style.backgroundColor = "#4CAF50";
+                    clearInterval(holdInterval);
+                });
+
+                button.addEventListener("mouseleave", () => {
+                    button.style.backgroundColor = "#4CAF50";
+                    clearInterval(holdInterval);
+                });
+            });
+        }
+
+        window.onload = setupButtonEvents;
+    </script>
+</head>
+<body>
+    <div class="controller">
+        <button id="up-button" class="button up">↑</button>
+        <button id="left-button" class="button left">←</button>
+        <button id="right-button" class="button right">→</button>
+        <button id="down-button" class="button down">↓</button>
+    </div>
+
+    <div class="speed-buttons">
+        <button class="speed-button" onclick="setSpeed(800)">800 ms</button>
+        <button class="speed-button" onclick="setSpeed(400)">400 ms</button>
+        <button class="speed-button" onclick="setSpeed(200)">200 ms</button>
+        <button class="speed-button" onclick="setSpeed(100)">100 ms</button>
+    </div>
+    <div id="speedDisplay">Current Speed: 100 ms</div>
+</body>
+</html>

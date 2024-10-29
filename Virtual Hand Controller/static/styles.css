@@ -1,0 +1,20 @@
+/* static/css/styles.css */
+
+/* Green square button styles */
+button {
+    background-color: #4CAF50; /* Green background */
+    color: white; /* White text */
+    border: none; /* No border */
+    width: 100px; /* Width to make the button square */
+    height: 100px; /* Height equal to width to maintain square shape */
+    text-align: center; /* Center text inside the button */
+    font-size: 16px; /* Font size */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    display: inline-block; /* Ensures proper alignment of the button */
+    line-height: 100px; /* Vertically center the text within the button */
+    border-radius: 0; /* No border radius for sharp corners */
+}
+
+button:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
